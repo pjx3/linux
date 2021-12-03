@@ -3597,6 +3597,17 @@ Load:   dtoverlay=vc4-kms-dsi-lt070me05000-v2
 Params: <None>
 
 
+Name:   vc4-kms-dsi-mdt0600bisc
+Info:   Enable a Midas Displays MDT0600BSIC DSI display on DSI1.
+        Note that this is a 4 lane DSI device, so it will only work on a Compute
+        Module.
+        Requires vc4-kms-v3d to be loaded.
+Load:   dtoverlay=vc4-kms-dsi-mdt0600bisc,<param>
+Params: dimctrl                 GPIO for the backlight control (default 16)
+        reset                   GPIO for the reset signal (default 17)
+        te                      GPIO for the tearing effect (default 18)
+
+
 Name:   vc4-kms-kippah-7inch
 Info:   Enable the Adafruit DPI Kippah with the 7" Ontat panel attached.
         Requires vc4-kms-v3d to be loaded.

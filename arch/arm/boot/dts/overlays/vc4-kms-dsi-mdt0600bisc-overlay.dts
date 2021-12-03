@@ -1,0 +1,63 @@
+/*
+ * Device Tree overlay to connect a Midas Displays MDT0600BISC DSI panel to DSI1.
+ * This uses 4 DSI data lanes, so can only be used with a Compute Module.
+ */
+
+/dts-v1/;
+/plugin/;
+
+/ {
+	compatible = "brcm,bcm2835";
+
+	fragment@0 {
+		target = <&dsi1>;
+		__overlay__{
+			status = "okay";
+			#address-cells = <1>;
+			#size-cells = <0>;
+			port {
+				dsi_out_port:endpoint {
+					remote-endpoint = <&panel_dsi_port>;
+				};
+			};
+
+			mdt0600bisc:mdt0600bisc@0 {
+				compatible    = "midasdisplays,mdt0600bisc";
+				status        = "okay";
+				reg           = <0>;
+				dimctrl-gpios = <&gpio 16 0>;	// LCD BACKLIGHT DIM CTRL (out)
+				reset-gpios   = <&gpio 17 1>;   // LCD RST (out, active low)
+				te-gpios      = <&gpio 18 0>;   // LCD Tearing Effect (in)
+				port {
+					panel_dsi_port: endpoint {
+						remote-endpoint = <&dsi_out_port>;
+					};
+				};
+			};
+		};
+	};
+
+	fragment@1 {
+		target = <&gpio>;
+		__overlay__ {
+			mdt0600bisc_pins: mdt0600bisc_pins {
+				brcm,pins = <16 17 18>;
+				brcm,function = <0 0 1>; // out out in
+				brcm,pull = <0 0 0>;     // off off off
+			};
+		};
+
+	};
+
+	__overrides__ {
+		dimctrl = <&mdt0600bisc_pins>,"brcm,pins:0",
+			<&mdt0600bisc>,"dimctrl-gpios:4";
+
+		reset = <&mdt0600bisc_pins>,"brcm,pins:4",
+			<&mdt0600bisc>,"reset-gpios:4";
+
+		te = <&mdt0600bisc_pins>,"brcm,pins:8",
+			<&mdt0600bisc>,"te-gpios:4";
+	};
+};
+
